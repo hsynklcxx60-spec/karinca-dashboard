@@ -2799,6 +2799,35 @@ min Panel Styles */
     box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
 }
 
+.btn-reset-password {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+    color: white;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-reset-password:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.user-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
 .no-users {
     text-align: center;
     padding: 2rem;

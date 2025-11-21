@@ -2024,11 +2024,16 @@
                                                 ${email === ADMIN_EMAIL ? '<span class="user-badge">Ana Anahtar</span>' : '<span class="user-badge">Anahtar</span>'}
                                             </div>
                                         </div>
-                                        ${email !== ADMIN_EMAIL ? `
-                                            <button class="btn-remove" onclick="removeAdmin('${email}')" title="Anahtar Yetkisini Kaldır">
-                                                🗑️
+                                        <div class="user-actions">
+                                            <button class="btn-action btn-reset-password" onclick="sendPasswordResetEmail('${email}')" title="Şifre Sıfırlama Email'i Gönder">
+                                                🔑
                                             </button>
-                                        ` : '<span class="protected-badge">🛡️ Korumalı</span>'}
+                                            ${email !== ADMIN_EMAIL ? `
+                                                <button class="btn-remove" onclick="removeAdmin('${email}')" title="Anahtar Yetkisini Kaldır">
+                                                    🗑️
+                                                </button>
+                                            ` : '<span class="protected-badge" style="margin-left: 0.5rem;">🛡️ Korumalı</span>'}
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -2048,9 +2053,14 @@
                                                     <span class="user-badge normal-badge">Normal</span>
                                                 </div>
                                             </div>
-                                            <button class="btn-remove" onclick="removeUser('${email}')" title="Yetkiyi Kaldır">
-                                                🗑️
-                                            </button>
+                                            <div class="user-actions">
+                                                <button class="btn-action btn-reset-password" onclick="sendPasswordResetEmail('${email}')" title="Şifre Sıfırlama Email'i Gönder">
+                                                    🔑
+                                                </button>
+                                                <button class="btn-remove" onclick="removeUser('${email}')" title="Yetkiyi Kaldır">
+                                                    🗑️
+                                                </button>
+                                            </div>
                                         </div>
                                     `).join('')
                                 }
@@ -2179,6 +2189,28 @@
                     setTimeout(() => showAdminPanel(), 500);
                 } else {
                     showToast('❌ Bir hata oluştu', 'error');
+                }
+            }
+        }
+
+        // Şifre sıfırlama email'i gönder
+        async function sendPasswordResetEmail(email) {
+            if (confirm(`"${email}" adresine şifre sıfırlama email'i göndermek istediğinizden emin misiniz?`)) {
+                showToast('🔄 Email gönderiliyor...', 'info');
+                
+                try {
+                    await firebase.auth().sendPasswordResetEmail(email);
+                    showToast(`✅ Şifre sıfırlama email'i "${email}" adresine gönderildi!`, 'success');
+                } catch (error) {
+                    console.error('Şifre sıfırlama email hatası:', error);
+                    
+                    if (error.code === 'auth/user-not-found') {
+                        showToast('❌ Bu email adresi ile kayıtlı kullanıcı bulunamadı!', 'error');
+                    } else if (error.code === 'auth/invalid-email') {
+                        showToast('❌ Geçersiz email adresi!', 'error');
+                    } else {
+                        showToast('❌ Email gönderilemedi: ' + error.message, 'error');
+                    }
                 }
             }
         }
