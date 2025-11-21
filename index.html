@@ -23,27 +23,62 @@
 <body>
     <!-- Login Screen -->
     <div class="login-screen" id="login-screen">
+        <div class="login-background">
+            <div class="login-pattern"></div>
+        </div>
         <div class="login-container">
-            <div class="login-header">
-                <div class="login-logo">
-                    <img src="karinca-logo.svg" alt="Karınca Logo" style="width: 80px; height: 80px;">
-                    <h1>Performans Dashboard</h1>
-                    <p>Lütfen giriş yapın</p>
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo-wrapper">
+                        <div class="logo-circle">
+                            <img src="karinca-logo.svg" alt="Karınca Logo" class="login-logo-img">
+                        </div>
+                        <h1 class="login-title">Karınca Logistics</h1>
+                        <p class="login-subtitle">Performans Dashboard</p>
+                    </div>
                 </div>
-            </div>
-            <div class="login-form-container">
-                <div class="form-group">
-                    <label for="login-email-input">Email Adresi</label>
-                    <input type="email" id="login-email-input" class="form-input" placeholder="ornek@email.com" />
-                </div>
-                <div class="form-actions">
-                    <button class="btn btn-primary btn-login" onclick="performLogin()">
-                        🔑 Giriş Yap
-                    </button>
-                </div>
-                <div class="login-info">
-                    <p><strong>ℹ️ Bilgi:</strong> Sadece yetkili email adresleri erişebilir.</p>
-                    <p><strong>🔑 Anahtar Kullanıcı:</strong> huseyin.kilic@karincalogistics.com</p>
+                <div class="login-body">
+                    <div class="welcome-text">
+                        <h2>Hoş Geldiniz</h2>
+                        <p>Devam etmek için lütfen giriş yapın</p>
+                    </div>
+                    <div class="login-form">
+                        <div class="form-group">
+                            <label for="login-email-input" class="form-label">
+                                <span class="label-icon">📧</span>
+                                Email Adresi
+                            </label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="email" 
+                                    id="login-email-input" 
+                                    class="form-input" 
+                                    placeholder="ornek@karincalogistics.com"
+                                    autocomplete="email"
+                                />
+                            </div>
+                        </div>
+                        <button class="btn-login-modern" onclick="performLogin()">
+                            <span class="btn-content">
+                                <span class="btn-icon">🔐</span>
+                                <span class="btn-text">Güvenli Giriş</span>
+                            </span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                    <div class="login-footer">
+                        <div class="info-card">
+                            <div class="info-icon">🔒</div>
+                            <div class="info-content">
+                                <p class="info-title">Güvenli Erişim</p>
+                                <p class="info-text">Sadece yetkili kullanıcılar erişebilir</p>
+                            </div>
+                        </div>
+                        <div class="admin-info">
+                            <span class="admin-badge">👑 Admin</span>
+                            <span class="admin-email">huseyin.kilic@karincalogistics.com</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
