@@ -1921,6 +1921,11 @@
             try {
                 const user = firebase.auth().currentUser;
                 
+                if (!user) {
+                    showToast('❌ Oturum bulunamadı. Lütfen tekrar giriş yapın.', 'error');
+                    return;
+                }
+                
                 // Önce mevcut şifre ile yeniden kimlik doğrulama yap
                 const credential = firebase.auth.EmailAuthProvider.credential(
                     user.email,
@@ -1933,12 +1938,9 @@
                 await user.updatePassword(newPassword);
                 
                 showToast('✅ Şifreniz başarıyla değiştirildi!', 'success');
-                closeModal();
                 
-                // Inputları temizle
-                document.getElementById('current-password').value = '';
-                document.getElementById('new-password').value = '';
-                document.getElementById('confirm-password').value = '';
+                // Modal'ı kapat
+                closeModal();
                 
             } catch (error) {
                 console.error('Şifre değiştirme hatası:', error);
