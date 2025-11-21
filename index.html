@@ -14,6 +14,7 @@
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <!-- Firebase Auth System -->
@@ -36,6 +37,10 @@
                     <label for="login-email-input">Email Adresi</label>
                     <input type="email" id="login-email-input" class="form-input" placeholder="ornek@email.com" />
                 </div>
+                <div class="form-group">
+                    <label for="login-password-input">Şifre</label>
+                    <input type="password" id="login-password-input" class="form-input" placeholder="••••••••" />
+                </div>
                 <div class="form-actions">
                     <button class="btn btn-primary btn-login" onclick="performLogin()">
                         🔑 Giriş Yap
@@ -43,7 +48,7 @@
                 </div>
                 <div class="login-info">
                     <p><strong>ℹ️ Bilgi:</strong> Sadece yetkili email adresleri erişebilir.</p>
-                    <p><strong>🔑 Anahtar Kullanıcı:</strong> huseyin.kilic@karincalogistics.com</p>
+                    <p><strong>🔑 İlk Giriş:</strong> Şifrenizi oluşturmak için admin ile iletişime geçin.</p>
                 </div>
             </div>
         </div>
@@ -93,6 +98,10 @@
                             <div class="menu-item" onclick="showAdminPanel()" id="admin-menu-item" style="display: none;">
                                 <span class="menu-item-icon">👑</span>
                                 <span class="menu-item-text">Yetki Paneli</span>
+                            </div>
+                            <div class="menu-item" onclick="showPasswordManagement()" id="password-menu-item">
+                                <span class="menu-item-icon">🔑</span>
+                                <span class="menu-item-text">Şifre Yönetimi</span>
                             </div>
                             <div class="menu-item" onclick="showUserInfo()" id="user-info-item">
                                 <span class="menu-item-icon">👤</span>
@@ -1722,10 +1731,17 @@
         // Giriş yap
         async function performLogin() {
             const emailInput = document.getElementById('login-email-input');
+            const passwordInput = document.getElementById('login-password-input');
             const email = emailInput.value.trim().toLowerCase();
+            const password = passwordInput.value;
             
             if (!email) {
                 showToast('❌ Lütfen email adresinizi girin', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showToast('❌ Lütfen şifrenizi girin', 'error');
                 return;
             }
             
@@ -1734,28 +1750,49 @@
                 return;
             }
             
-            showToast('🔄 Yetki kontrol ediliyor...', 'info');
+            showToast('🔄 Giriş yapılıyor...', 'info');
             
-            const isAuthorized = await FirebaseAuth.checkUserAuthorization(email);
-            
-            if (isAuthorized) {
-                const adminEmails = await getAdminEmails();
+            try {
+                // Firebase Authentication ile giriş yap
+                const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
                 
-                localStorage.setItem('dashboard-current-user', email);
-                currentUserEmail = email;
-                isAuthenticated = true;
-                isAdmin = adminEmails.includes(email);
+                // Yetki kontrolü yap
+                const isAuthorized = await FirebaseAuth.checkUserAuthorization(email);
                 
-                showDashboard();
-                updateMenuVisibility();
-                
-                if (isAdmin) {
-                    showToast('👑 Anahtar Kullanıcı olarak giriş yapıldı!', 'success');
+                if (isAuthorized) {
+                    const adminEmails = await getAdminEmails();
+                    
+                    localStorage.setItem('dashboard-current-user', email);
+                    currentUserEmail = email;
+                    isAuthenticated = true;
+                    isAdmin = adminEmails.includes(email);
+                    
+                    showDashboard();
+                    updateMenuVisibility();
+                    
+                    if (isAdmin) {
+                        showToast('👑 Anahtar Kullanıcı olarak giriş yapıldı!', 'success');
+                    } else {
+                        showToast('✅ Başarıyla giriş yapıldı!', 'success');
+                    }
                 } else {
-                    showToast('✅ Başarıyla giriş yapıldı!', 'success');
+                    // Yetkisi yoksa çıkış yap
+                    await firebase.auth().signOut();
+                    showToast('❌ Bu email adresi yetkili değil!', 'error');
                 }
-            } else {
-                showToast('❌ Bu email adresi yetkili değil!', 'error');
+            } catch (error) {
+                console.error('Giriş hatası:', error);
+                
+                if (error.code === 'auth/wrong-password') {
+                    showToast('❌ Hatalı şifre!', 'error');
+                } else if (error.code === 'auth/user-not-found') {
+                    showToast('❌ Kullanıcı bulunamadı! Lütfen admin ile iletişime geçin.', 'error');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showToast('❌ Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.', 'error');
+                } else {
+                    showToast('❌ Giriş yapılamadı: ' + error.message, 'error');
+                }
             }
         }
 
@@ -1806,6 +1843,117 @@
             
             showModal(modalContent);
             closeSettings();
+        }
+
+        // Şifre yönetimi panelini göster
+        function showPasswordManagement() {
+            const modalContent = `
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <div class="personnel-avatar large">
+                            <span>🔑</span>
+                        </div>
+                        <div>
+                            <h2>Şifre Yönetimi</h2>
+                            <p>Şifrenizi güvenli bir şekilde değiştirin</p>
+                        </div>
+                    </div>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="detail-section">
+                        <div class="password-change-form">
+                            <div class="form-group">
+                                <label for="current-password">Mevcut Şifre</label>
+                                <input type="password" id="current-password" class="form-input" placeholder="Mevcut şifrenizi girin" />
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">Yeni Şifre</label>
+                                <input type="password" id="new-password" class="form-input" placeholder="Yeni şifrenizi girin (en az 6 karakter)" />
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Yeni Şifre (Tekrar)</label>
+                                <input type="password" id="confirm-password" class="form-input" placeholder="Yeni şifrenizi tekrar girin" />
+                            </div>
+                            <div class="form-actions" style="margin-top: 1.5rem;">
+                                <button class="btn btn-primary" onclick="changePassword()" style="width: 100%;">
+                                    🔑 Şifreyi Değiştir
+                                </button>
+                            </div>
+                            <div class="password-info" style="margin-top: 1.5rem; padding: 1rem; background: rgba(59, 130, 246, 0.1); border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                                    <strong>💡 İpucu:</strong> Güçlü bir şifre için en az 6 karakter kullanın ve büyük/küçük harf, rakam ve özel karakterler ekleyin.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showModal(modalContent);
+            closeSettings();
+        }
+
+        // Şifre değiştir
+        async function changePassword() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showToast('❌ Lütfen tüm alanları doldurun', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showToast('❌ Yeni şifre en az 6 karakter olmalıdır', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showToast('❌ Yeni şifreler eşleşmiyor', 'error');
+                return;
+            }
+            
+            showToast('🔄 Şifre değiştiriliyor...', 'info');
+            
+            try {
+                const user = firebase.auth().currentUser;
+                
+                // Önce mevcut şifre ile yeniden kimlik doğrulama yap
+                const credential = firebase.auth.EmailAuthProvider.credential(
+                    user.email,
+                    currentPassword
+                );
+                
+                await user.reauthenticateWithCredential(credential);
+                
+                // Şifreyi değiştir
+                await user.updatePassword(newPassword);
+                
+                showToast('✅ Şifreniz başarıyla değiştirildi!', 'success');
+                closeModal();
+                
+                // Inputları temizle
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-password').value = '';
+                
+            } catch (error) {
+                console.error('Şifre değiştirme hatası:', error);
+                
+                if (error.code === 'auth/wrong-password') {
+                    showToast('❌ Mevcut şifre hatalı!', 'error');
+                } else if (error.code === 'auth/weak-password') {
+                    showToast('❌ Şifre çok zayıf! Daha güçlü bir şifre seçin.', 'error');
+                } else if (error.code === 'auth/requires-recent-login') {
+                    showToast('❌ Güvenlik nedeniyle tekrar giriş yapmanız gerekiyor', 'error');
+                    setTimeout(() => logout(), 2000);
+                } else {
+                    showToast('❌ Şifre değiştirilemedi: ' + error.message, 'error');
+                }
+            }
         }
 
         // Admin panelini göster
@@ -2084,8 +2232,15 @@
         }
 
         // Çıkış yap
-        function logout() {
+        async function logout() {
             if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                try {
+                    // Firebase'den çıkış yap
+                    await firebase.auth().signOut();
+                } catch (error) {
+                    console.error('Firebase çıkış hatası:', error);
+                }
+                
                 localStorage.removeItem('dashboard-current-user');
                 currentUserEmail = null;
                 isAuthenticated = false;
