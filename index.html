@@ -984,28 +984,32 @@
             }
             
             const modalContent = `
-                <div class="modal-header">
-                    <div class="modal-title">
-                        <div class="personnel-avatar large">
+                <div class="modal-header personnel-modal-header">
+                    <button class="modal-close-left" onclick="closeModal()">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="modal-title-center">
+                        <div class="personnel-avatar-modern">
                             <span>👥</span>
                         </div>
-                        <div>
+                        <div class="title-text">
                             <h2>Personel Listesi</h2>
                             <p id="personnelCount">${appData.personnel.length} Aktif Personel</p>
                         </div>
                     </div>
-                    <div class="modal-header-actions">
-                        <div class="search-box">
-                            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                            <input type="text" 
-                                   id="personnelSearchInput" 
-                                   class="search-input" 
-                                   placeholder="Personel adı ara..." 
-                                   oninput="filterPersonnelList(this.value)">
-                        </div>
-                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    <div class="search-box-modern">
+                        <svg class="search-icon-modern" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" 
+                               id="personnelSearchInput" 
+                               class="search-input-modern" 
+                               placeholder="Personel adı ara..." 
+                               oninput="filterPersonnelList(this.value)">
                     </div>
                 </div>
                 
