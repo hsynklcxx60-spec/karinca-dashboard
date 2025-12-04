@@ -1710,14 +1710,38 @@ function saveGitHubSettings() {
 
 async function loadFromGitHub() {
     try {
+        console.log('🔍 loadFromGitHub çağrıldı');
+        
+        // Modül kontrolü
+        if (!window.DataFetcher) {
+            console.error('❌ DataFetcher yüklenmedi!');
+            alert('DataFetcher modülü yüklenmedi. Sayfayı yenileyin.');
+            return;
+        }
+        
+        if (!window.Utils) {
+            console.error('❌ Utils yüklenmedi!');
+            alert('Utils modülü yüklenmedi. Sayfayı yenileyin.');
+            return;
+        }
+        
+        console.log('✅ Modüller yüklü, veri çekiliyor...');
         await DataFetcher.loadFromGitHub();
         
         // Son çekme zamanını güncelle
-        document.getElementById('last-fetch-info').style.display = 'block';
-        document.getElementById('last-fetch-time').textContent = DataFetcher.getLastFetchTime();
+        const lastFetchInfo = document.getElementById('last-fetch-info');
+        const lastFetchTime = document.getElementById('last-fetch-time');
+        
+        if (lastFetchInfo && lastFetchTime) {
+            lastFetchInfo.style.display = 'block';
+            lastFetchTime.textContent = DataFetcher.getLastFetchTime();
+        }
+        
+        console.log('✅ Veri çekme tamamlandı');
         
     } catch (error) {
-        console.error('GitHub yükleme hatası:', error);
+        console.error('❌ GitHub yükleme hatası:', error);
+        alert('Veri çekme hatası: ' + error.message);
     }
 }
 
