@@ -853,6 +853,44 @@ body {
     background: var(--bg-primary);
 }
 
+/* Personel Arama */
+.personnel-search-container {
+    padding: 1rem 2rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.personnel-search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.personnel-search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.personnel-search-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.no-results {
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
 .detail-stats {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));

@@ -998,7 +998,14 @@
                 </div>
                 
                 <div class="modal-body">
-                    <div class="personnel-grid-modal">
+                    <div class="personnel-search-container">
+                        <input type="text" 
+                               id="personnelSearchInput" 
+                               class="personnel-search-input" 
+                               placeholder="🔍 Personel adı ara..." 
+                               oninput="filterPersonnelList(this.value)">
+                    </div>
+                    <div class="personnel-grid-modal" id="personnelGridModal">
                         ${appData.personnel.map(person => {
                             const performanceClass = getPerformanceClass(person.performance);
                             return `
@@ -1061,6 +1068,94 @@
             `;
             
             showModal(modalContent);
+        }
+        
+        // Personel listesini filtrele
+        function filterPersonnelList(searchTerm) {
+            if (!appData || !appData.personnel) return;
+            
+            const searchLower = searchTerm.toLowerCase().trim();
+            const personnelGrid = document.getElementById('personnelGridModal');
+            
+            if (!personnelGrid) return;
+            
+            const filteredPersonnel = appData.personnel.filter(person => 
+                person.name.toLowerCase().includes(searchLower)
+            );
+            
+            // Sonuç sayısını güncelle
+            const modalTitle = document.querySelector('.modal-header p');
+            if (modalTitle) {
+                if (searchTerm.trim()) {
+                    modalTitle.textContent = `${filteredPersonnel.length} / ${appData.personnel.length} Personel`;
+                } else {
+                    modalTitle.textContent = `${appData.personnel.length} Aktif Personel`;
+                }
+            }
+            
+            // Grid'i güncelle
+            personnelGrid.innerHTML = filteredPersonnel.map(person => {
+                const performanceClass = getPerformanceClass(person.performance);
+                return `
+                    <div class="personnel-card-modal" onclick="showPersonnelDetailsByName('${person.name}')">
+                        <div class="personnel-header">
+                            <div class="personnel-avatar">
+                                <span>${person.name.charAt(0).toUpperCase()}</span>
+                            </div>
+                            <div class="personnel-info">
+                                <h4>${person.name}</h4>
+                                <span class="personnel-role">Operasyon Personeli</span>
+                            </div>
+                            <div class="personnel-performance ${performanceClass}">
+                                <span class="performance-score">${person.performance}%</span>
+                                <span class="performance-label">Performans</span>
+                            </div>
+                        </div>
+                        
+                        <div class="personnel-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">📦</span>
+                                <div class="stat-content">
+                                    <span class="stat-value">${person.totalTransactions}</span>
+                                    <span class="stat-label">İşlem</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">🔴</span>
+                                <div class="stat-content">
+                                    <span class="stat-value">${person.totalQuantity.toLocaleString()}</span>
+                                    <span class="stat-label">Miktar</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">🏢</span>
+                                <div class="stat-content">
+                                    <span class="stat-value">${person.warehouses.length}</span>
+                                    <span class="stat-label">Proje</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⏰</span>
+                                <div class="stat-content">
+                                    <span class="stat-value">${minutesToTime(person.workingHours?.netHours || 0)}</span>
+                                    <span class="stat-label">Çalışma</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="personnel-footer">
+                            <button class="btn-detail" onclick="event.stopPropagation(); showPersonnelDetailsByName('${person.name}')">
+                                Detayları Görüntüle
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Sonuç bulunamadı mesajı
+            if (filteredPersonnel.length === 0) {
+                personnelGrid.innerHTML = '<div class="no-results">Aradığınız kriterlere uygun personel bulunamadı.</div>';
+            }
         }
         
         // Miktar detaylarını göster
