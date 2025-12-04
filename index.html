@@ -179,6 +179,14 @@
     <main class="dashboard" id="main-dashboard" style="display: none;">
         <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
+            <!-- Tarih Seç Butonu (Upload Ekranında) -->
+            <div class="upload-sidebar">
+                <button class="sidebar-btn" onclick="toggleGitHubDateSelectorUpload()" title="Tarih Seç">
+                    <span class="sidebar-icon">📅</span>
+                    <span class="sidebar-text">Tarih Seç</span>
+                </button>
+            </div>
+            
             <div class="upload-container">
                 <!-- URL Veri Çekme Ayarları -->
                 <div class="github-settings-card">
@@ -278,13 +286,8 @@
                         <span class="sidebar-text">Performans Hesaplama</span>
                     </button>
                     
-                    <button class="sidebar-btn" onclick="toggleDateSelector()" title="Tarih Seç">
-                        <span class="sidebar-icon">📅</span>
-                        <span class="sidebar-text">Tarih Seç</span>
-                    </button>
-                    
                     <button class="sidebar-btn" onclick="toggleGitHubDateSelector()" title="Tarih Seç">
-                        <span class="sidebar-icon">📂</span>
+                        <span class="sidebar-icon">📅</span>
                         <span class="sidebar-text">Tarih Seç</span>
                     </button>
                 </div>

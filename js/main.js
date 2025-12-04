@@ -1834,3 +1834,20 @@ async function toggleGitHubDateSelector() {
         wrapper.style.display = 'none';
     }
 }
+
+
+// ===== Upload Ekranında Tarih Seçici =====
+
+async function toggleGitHubDateSelectorUpload() {
+    // Önce dashboard'u göster
+    const uploadSection = document.getElementById('upload-section');
+    const dashboardContent = document.getElementById('dashboard-content');
+    
+    if (uploadSection && dashboardContent) {
+        uploadSection.style.display = 'none';
+        dashboardContent.style.display = 'block';
+    }
+    
+    // Sonra tarih seçiciyi aç
+    await toggleGitHubDateSelector();
+}

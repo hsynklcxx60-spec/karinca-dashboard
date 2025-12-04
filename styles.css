@@ -4040,3 +4040,16 @@ min Panel Styles */
 .date-row td {
     vertical-align: middle;
 }
+
+
+/* Upload Ekranı Sidebar */
+.upload-sidebar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 999;
+}
+
+.upload-section {
+    position: relative;
+}
