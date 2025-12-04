@@ -177,10 +177,10 @@
         <!-- Upload Section -->
         <section class="upload-section" id="upload-section">
             <div class="upload-container">
-                <!-- GitHub URL Ayarları -->
+                <!-- URL Veri Çekme Ayarları -->
                 <div class="github-settings-card">
                     <div class="settings-header">
-                        <h3>🔗 GitHub'dan Otomatik Veri Çekme</h3>
+                        <h3>🔗 URL'den Otomatik Veri Çekme</h3>
                         <button class="btn btn-sm" onclick="toggleGitHubSettings()">
                             <span id="github-toggle-icon">▼</span> <span id="github-toggle-text">Ayarlar</span>
                         </button>
@@ -188,15 +188,15 @@
                     
                     <div class="github-settings-content" id="github-settings-content" style="display: none;">
                         <div class="input-group">
-                            <label for="github-url-input">GitHub Raw URL:</label>
+                            <label for="github-url-input">Veri Kaynağı URL:</label>
                             <input 
                                 type="url" 
                                 id="github-url-input" 
                                 class="input-modern" 
-                                placeholder="https://raw.githubusercontent.com/user/repo/main/data.xlsx"
+                                placeholder="https://... (GitHub, Dropbox, Google Drive, vb.)"
                             />
                             <small class="input-hint">
-                                💡 Excel dosyanızı GitHub'a yükleyin ve "Raw" linkini buraya yapıştırın
+                                💡 GitHub, Dropbox, Google Drive veya herhangi bir HTTPS linkini yapıştırın
                             </small>
                         </div>
                         

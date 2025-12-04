@@ -10,20 +10,22 @@ const DataFetcher = {
         timer: null
     },
 
-    // GitHub'dan veri çek
+    // Herhangi bir URL'den veri çek
     async fetchFromGitHub(url) {
         try {
-            console.log('📥 GitHub\'dan veri çekiliyor:', url);
+            console.log('📥 URL\'den veri çekiliyor:', url);
             
             if (!url || url.trim() === '') {
-                throw new Error('GitHub URL boş olamaz');
+                throw new Error('URL boş olamaz');
             }
 
-            // Raw URL'e çevir (eğer normal GitHub linki ise)
-            const rawUrl = this.convertToRawUrl(url);
+            // URL'i optimize et (GitHub, Dropbox, vb.)
+            const optimizedUrl = this.optimizeUrl(url);
+            console.log('🔗 Optimize edilmiş URL:', optimizedUrl);
             
-            const response = await fetch(rawUrl, {
+            const response = await fetch(optimizedUrl, {
                 cache: 'no-cache',
+                mode: 'cors',
                 headers: {
                     'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv'
                 }
@@ -47,7 +49,7 @@ const DataFetcher = {
             console.log('✅ Dosya indirildi:', (blob.size / 1024).toFixed(2), 'KB');
 
             // Dosya adını URL'den çıkar
-            const fileName = this.getFileNameFromUrl(rawUrl);
+            const fileName = this.getFileNameFromUrl(optimizedUrl);
             
             // Blob'u File objesine çevir
             const file = new File([blob], fileName, { 
@@ -61,26 +63,52 @@ const DataFetcher = {
             return file;
 
         } catch (error) {
-            console.error('❌ GitHub veri çekme hatası:', error);
-            throw new Error(`GitHub'dan veri çekilemedi: ${error.message}`);
+            console.error('❌ Veri çekme hatası:', error);
+            throw new Error(`URL'den veri çekilemedi: ${error.message}`);
         }
     },
 
-    // Normal GitHub URL'i raw URL'e çevir
-    convertToRawUrl(url) {
-        if (url.includes('raw.githubusercontent.com')) {
-            return url;
-        }
-        
-        if (url.includes('github.com')) {
-            // https://github.com/user/repo/blob/main/file.xlsx
-            // -> https://raw.githubusercontent.com/user/repo/main/file.xlsx
+    // URL'i optimize et (GitHub, Dropbox, Google Drive, vb.)
+    optimizeUrl(url) {
+        // GitHub - Raw URL'e çevir
+        if (url.includes('github.com') && !url.includes('raw.githubusercontent.com')) {
             return url
                 .replace('github.com', 'raw.githubusercontent.com')
                 .replace('/blob/', '/');
         }
         
+        // Dropbox - Direkt indirme linki
+        if (url.includes('dropbox.com')) {
+            // ?dl=0 varsa ?dl=1 yap
+            if (url.includes('?dl=0')) {
+                return url.replace('?dl=0', '?dl=1');
+            }
+            // ?dl parametresi yoksa ekle
+            if (!url.includes('?dl=')) {
+                return url + (url.includes('?') ? '&dl=1' : '?dl=1');
+            }
+        }
+        
+        // Google Drive - Export link'e çevir
+        if (url.includes('drive.google.com/file/d/')) {
+            const fileId = url.match(/\/d\/([^\/]+)/)?.[1];
+            if (fileId) {
+                return `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+        }
+        
+        // OneDrive - Download link kontrolü
+        if (url.includes('onedrive.live.com') && !url.includes('download')) {
+            return url.replace('view.aspx', 'download.aspx');
+        }
+        
+        // Diğer URL'ler olduğu gibi
         return url;
+    },
+
+    // Normal GitHub URL'i raw URL'e çevir (eski fonksiyon - geriye uyumluluk için)
+    convertToRawUrl(url) {
+        return this.optimizeUrl(url);
     },
 
     // URL'den dosya adını çıkar
