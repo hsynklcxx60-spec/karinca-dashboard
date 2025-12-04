@@ -853,42 +853,69 @@ body {
     background: var(--bg-primary);
 }
 
-/* Personel Arama */
-.personnel-search-container {
-    padding: 1rem 2rem;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+/* Modal Header Actions */
+.modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.personnel-search-input {
+/* Modern Search Box */
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 280px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: color 0.2s ease;
+}
+
+.search-input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border: 2px solid var(--border-color);
-    border-radius: var(--border-radius);
-    background: var(--bg-primary);
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-secondary);
     color: var(--text-primary);
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
 }
 
-.personnel-search-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+.search-input::placeholder {
+    color: var(--text-secondary);
+    font-weight: 400;
 }
 
-.personnel-search-input::placeholder {
-    color: var(--text-secondary);
+.search-input:hover {
+    border-color: #cbd5e1;
+    background: var(--bg-primary);
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    background: var(--bg-primary);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.search-input:focus + .search-icon,
+.search-box:focus-within .search-icon {
+    color: var(--primary-color);
 }
 
 .no-results {
-    padding: 3rem 2rem;
+    padding: 4rem 2rem;
     text-align: center;
     color: var(--text-secondary);
     font-size: 1rem;
+    font-weight: 500;
 }
 
 .detail-stats {

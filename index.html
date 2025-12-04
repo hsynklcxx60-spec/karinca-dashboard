@@ -991,20 +991,25 @@
                         </div>
                         <div>
                             <h2>Personel Listesi</h2>
-                            <p>${appData.personnel.length} Aktif Personel</p>
+                            <p id="personnelCount">${appData.personnel.length} Aktif Personel</p>
                         </div>
                     </div>
-                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                    <div class="modal-header-actions">
+                        <div class="search-box">
+                            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM18 18l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input type="text" 
+                                   id="personnelSearchInput" 
+                                   class="search-input" 
+                                   placeholder="Personel adı ara..." 
+                                   oninput="filterPersonnelList(this.value)">
+                        </div>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
                 </div>
                 
                 <div class="modal-body">
-                    <div class="personnel-search-container">
-                        <input type="text" 
-                               id="personnelSearchInput" 
-                               class="personnel-search-input" 
-                               placeholder="🔍 Personel adı ara..." 
-                               oninput="filterPersonnelList(this.value)">
-                    </div>
                     <div class="personnel-grid-modal" id="personnelGridModal">
                         ${appData.personnel.map(person => {
                             const performanceClass = getPerformanceClass(person.performance);
@@ -1084,12 +1089,12 @@
             );
             
             // Sonuç sayısını güncelle
-            const modalTitle = document.querySelector('.modal-header p');
-            if (modalTitle) {
+            const personnelCount = document.getElementById('personnelCount');
+            if (personnelCount) {
                 if (searchTerm.trim()) {
-                    modalTitle.textContent = `${filteredPersonnel.length} / ${appData.personnel.length} Personel`;
+                    personnelCount.textContent = `${filteredPersonnel.length} / ${appData.personnel.length} Personel`;
                 } else {
-                    modalTitle.textContent = `${appData.personnel.length} Aktif Personel`;
+                    personnelCount.textContent = `${appData.personnel.length} Aktif Personel`;
                 }
             }
             
