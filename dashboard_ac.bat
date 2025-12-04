@@ -1,0 +1,3 @@
+@echo off
+echo Dashboard aciliyor...
+start index.html
