@@ -98,7 +98,7 @@ const GitHubFolderBrowser = {
             let html = `
                 <div class="github-date-selector">
                     <div class="date-selector-header">
-                        <h3>📅 GitHub Excel Dosyaları</h3>
+                        <h3>📊 Veriler</h3>
                         <div class="date-selector-actions">
                             <button class="btn btn-sm" onclick="GitHubFolderBrowser.refreshFiles()">
                                 🔄 Yenile
@@ -132,7 +132,7 @@ const GitHubFolderBrowser = {
                         <td>${sizeKB} KB</td>
                         <td>
                             <button class="btn btn-sm btn-primary" 
-                                onclick="GitHubFolderBrowser.loadFile('${file.downloadUrl}', '${file.name}')">
+                                onclick="GitHubFolderBrowser.loadFile('${file.downloadUrl}', '${file.name}', this)">
                                 📥 Yükle
                             </button>
                         </td>
@@ -156,9 +156,16 @@ const GitHubFolderBrowser = {
     },
 
     // Dosyayı yükle ve işle
-    async loadFile(url, filename) {
+    async loadFile(url, filename, buttonElement) {
         try {
             console.log('📥 Dosya yükleniyor:', filename);
+            
+            // Butonu devre dışı bırak ve loading göster
+            if (buttonElement) {
+                buttonElement.disabled = true;
+                buttonElement.innerHTML = '⏳ Yükleniyor...';
+                buttonElement.style.opacity = '0.6';
+            }
             
             if (!window.Utils) {
                 throw new Error('Utils modülü yüklenmedi');
@@ -185,10 +192,30 @@ const GitHubFolderBrowser = {
             
             Utils.hideLoading();
             
+            // Butonu geri getir
+            if (buttonElement) {
+                buttonElement.innerHTML = '✅ Yüklendi';
+                buttonElement.style.opacity = '1';
+                setTimeout(() => {
+                    buttonElement.innerHTML = '📥 Yükle';
+                    buttonElement.disabled = false;
+                }, 2000);
+            }
+            
         } catch (error) {
             Utils.hideLoading();
             console.error('❌ Dosya yükleme hatası:', error);
             Utils.showNotification(`❌ Hata: ${error.message}`, 'error');
+            
+            // Butonu geri getir
+            if (buttonElement) {
+                buttonElement.innerHTML = '❌ Hata';
+                buttonElement.style.opacity = '1';
+                setTimeout(() => {
+                    buttonElement.innerHTML = '📥 Yükle';
+                    buttonElement.disabled = false;
+                }, 2000);
+            }
         }
     },
 
