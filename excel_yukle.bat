@@ -23,23 +23,18 @@ if not exist "%EXCEL_FILE%" (
     exit
 )
 
-REM Bugunun tarihini al
-for /f "tokens=1-3 delims=." %%a in ('echo %date:~0,10%') do (
-    set DAY=%%a
-    set MONTH=%%b
-    set YEAR=%%c
+REM Dosya adini ve uzantisini al
+for %%F in ("%EXCEL_FILE%") do (
+    set FILENAME=%%~nxF
+    set EXT=%%~xF
 )
-set TODAY=%YEAR%-%MONTH%-%DAY%
 
-REM Dosya uzantisini al
-for %%F in ("%EXCEL_FILE%") do set EXT=%%~xF
-
-REM Hedef dosya
-set TARGET=excel\%TODAY%%EXT%
+REM Hedef dosya (orijinal ismiyle)
+set TARGET=excel\%FILENAME%
 
 echo.
 echo ----------------------------------------
-echo Dosya: %TODAY%%EXT%
+echo Dosya: %FILENAME%
 echo ----------------------------------------
 echo.
 
@@ -61,9 +56,9 @@ echo ========================================
 echo.
 echo 1. Git GUI acildi
 echo 2. "Rescan" butonuna bas
-echo 3. Dosyayi gor: %TODAY%%EXT%
+echo 3. Dosyayi gor: %FILENAME%
 echo 4. "Stage Changed" butonuna bas
-echo 5. Commit Message yaz: "Excel eklendi: %TODAY%"
+echo 5. Commit Message yaz: "Excel eklendi: %FILENAME%"
 echo 6. "Commit" butonuna bas
 echo 7. "Push" butonuna bas
 echo.
@@ -79,7 +74,7 @@ if /i "%AUTO%"=="E" (
     git add "%TARGET%"
     
     echo [4/4] Commit ve Push yapiliyor...
-    git commit -m "Excel eklendi: %TODAY%"
+    git commit -m "Excel eklendi: %FILENAME%"
     git push origin main
     
     echo.
@@ -87,7 +82,7 @@ if /i "%AUTO%"=="E" (
     echo   TAMAMLANDI!
     echo ========================================
     echo.
-    echo Dosya GitHub'a yuklendi: %TODAY%%EXT%
+    echo Dosya GitHub'a yuklendi: %FILENAME%
     echo.
     echo Dashboard'da "GitHub Tarihleri" butonuna basin!
     echo.

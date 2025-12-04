@@ -6,7 +6,8 @@ const GitHubFolderBrowser = {
         repoName: 'karinca-dashboard',
         branch: 'main',
         folderPath: 'excel',
-        filePattern: /^\d{4}-\d{2}-\d{2}\.(xlsx|xls|csv)$/i
+        // Hem 2024-12-04 hem 04.12.2024 formatlarını destekle
+        filePattern: /^(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})\.(xlsx|xls|csv)$/i
     },
 
     // GitHub klasöründeki dosyaları listele
@@ -54,8 +55,18 @@ const GitHubFolderBrowser = {
 
     // Dosya adından tarihi çıkar
     extractDate(filename) {
-        const match = filename.match(/^(\d{4}-\d{2}-\d{2})/);
-        return match ? match[1] : null;
+        // 2024-12-04 formatı
+        let match = filename.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (match) return match[1];
+        
+        // 04.12.2024 formatı -> 2024-12-04'e çevir
+        match = filename.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+        if (match) {
+            const [, day, month, year] = match;
+            return `${year}-${month}-${day}`;
+        }
+        
+        return null;
     },
 
     // Tarihi formatla (2024-12-04 -> 04.12.2024 Çarşamba)
