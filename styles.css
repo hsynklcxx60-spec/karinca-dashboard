@@ -4009,7 +4009,7 @@ min Panel Styles */
 /* Modern Sol Sidebar */
 .header-back-button {
     position: fixed;
-    top: 140px;
+    top: 90px;
     left: 20px;
     z-index: 1000;
 }
@@ -4047,7 +4047,7 @@ min Panel Styles */
 .header-sidebar {
     position: fixed;
     top: 140px;
-    left: 80px;
+    left: 30px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -4133,7 +4133,7 @@ min Panel Styles */
 /* Responsive */
 @media (max-width: 768px) {
     .header-back-button {
-        top: 120px;
+        top: 85px;
         left: 15px;
     }
     
@@ -4144,7 +4144,7 @@ min Panel Styles */
     
     .header-sidebar {
         top: 120px;
-        left: 70px;
+        left: 25px;
         gap: 10px;
     }
     
