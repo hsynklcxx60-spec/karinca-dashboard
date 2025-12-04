@@ -28,3 +28,12 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+
+# Gereksiz dosyalar
+CNAME
+js/urlDataLoader.js
+
+# Kopya klasörler
+*Kopya*
+*- Kopya*
